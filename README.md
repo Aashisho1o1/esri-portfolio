@@ -12,7 +12,7 @@
 
 **Aashish Sunar**  
 📍 Claremont, California (34.10° N, 117.71° W — ~30 miles from Esri HQ in Redlands)  
-✉️ [aashishsunar.01@gmail.com](mailto:aashishsunar.01@gmail.com) | 💼 [LinkedIn](https://www.linkedin.com/in/aashish-sunar/) | 🐙 [GitHub](https://github.com/Aashisho1o1) | 📄 [Resume (PDF)](resume.pdf)
+✉️ [aashishsunar.01@gmail.com](mailto:aashishsunar.01@gmail.com) | 💼 [LinkedIn](https://www.linkedin.com/in/aashish-sunar/) | 🐙 [GitHub](https://github.com/Aashisho1o1) | 📄 [Resume — SDE Intern (PDF)](resume.pdf)
 
 Candidate for **ArcGIS Product Engineering** and **Software Development Engineer (SDE) Intern** roles at Esri.
 
