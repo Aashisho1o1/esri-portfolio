@@ -2,7 +2,7 @@
 
 **[Try the live demo →](https://aashisho1o1.github.io/esri-portfolio/)**
 
-[![Live Demo](assets/demo.png)](https://aashisho1o1.github.io/esri-portfolio/)
+[![Live Demo](assets/portfolio-preview.png)](https://aashisho1o1.github.io/esri-portfolio/)
 
 > *"I build software for people who are not GIS specialists: the office assistant who has never opened a mapping tool, or the student who only wants to know which hospital is closest. I would like to keep doing that at Esri."*
 
@@ -44,11 +44,11 @@ Candidate for **ArcGIS Product Engineering** and **Software Development Engineer
 ```text
 ├── docs/                      # GitHub Pages deployment directory
 │   ├── index.html             # Interactive portfolio (3D globe + ArcGIS SDK)
-│   ├── assets/demo.png        # Portfolio preview banner
+│   ├── assets/portfolio-preview.png # Portfolio preview banner
 │   ├── resume.pdf             # Web-accessible PDF resume
 │   └── *.pdf                  # Cover letters & resumes
 ├── assets/
-│   └── demo.png               # High-resolution README preview image
+│   └── portfolio-preview.png  # High-resolution README preview image
 ├── Aashish_Sunar_Resume_Esri_ArcGISProductEngineering.pdf
 ├── Aashish_Sunar_Resume_Esri_SDEIntern.pdf
 ├── Aashish_Sunar_CoverLetter_Esri_ArcGISProductEngineering.pdf
