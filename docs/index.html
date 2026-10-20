@@ -14,7 +14,7 @@
 
     /* Day: everything in between. Cool mineral neutrals from cloud and ocean. */
     --bg: #F4F7F8; --surface: #FFFFFF; --text: #172733; --text-2: #455766;
-    --accent: #137F9E; --warm: #A35C00; --rule: #D6E1E7; --link: #075D85; --console: #EAF0F3;
+    --accent: #0E728E; --warm: #995600; --rule: #D6E1E7; --link: #075D85; --console: #EAF0F3;
 
     --display: Arial, "Helvetica Neue", Helvetica, sans-serif;
     --body: Arial, "Helvetica Neue", Helvetica, sans-serif;
@@ -191,7 +191,7 @@
     </nav>
     <p class="route"><b>Claremont, California</b>, 34.10° N, 117.71° W, about 30 miles from Redlands</p>
   </div>
-  <button class="motion" type="button" aria-pressed="false" hidden>Pause motion</button>
+  <button class="motion" type="button" hidden>Pause motion</button>
 </header>
 
 <main>
@@ -363,10 +363,10 @@
 <section id="map">
   <div class="wrap">
     <h2>Where the work happened</h2>
-    <p class="prose">Most of this work happened within about 40 miles of Esri. Select a place to fly to it. The map runs on the ArcGIS Maps SDK for JavaScript.</p>
+    <p class="prose">Most of this work happened in Claremont, about 30 miles from Esri, and the rest in Aliso Viejo, about 46. Select a place to fly to it. The map runs on the ArcGIS Maps SDK for JavaScript.</p>
     <div class="map-grid">
       <div id="viewDiv" role="region" aria-label="Map of places in this portfolio">
-        <div class="map-fallback">The map didn't load here. Every place is listed beside it.</div>
+        <div class="map-fallback" role="status">Loading the map…</div>
       </div>
       <ul class="places">
         <li>
@@ -448,11 +448,15 @@
       .ringMaxRadius(2.6).ringPropagationSpeed(0.8).ringRepeatPeriod(2400);
 
     globe.renderer().setPixelRatio(Math.min(devicePixelRatio || 1, 1.75));
+    // If the GPU drops the context, the canvas goes blank. Bring the poster back.
+    globe.renderer().domElement.addEventListener("webglcontextlost", function () {
+      hero.classList.remove("live"); button.hidden = true; globe.pauseAnimation();
+    });
     var controls = globe.controls();
     controls.enableZoom = false; controls.enablePan = false;
     controls.rotateSpeed = 0.5;
 
-    var paused = false, visible = true, dragging = false, t0 = performance.now();
+    var paused = false, visible = true, dragging = false, t0 = performance.now(), settle, release;
     globe.pointOfView({ lat: CENTER.lat, lng: CENTER.lng, altitude: 2.7 }, 0);
 
     globe.onGlobeReady(function () {
@@ -470,18 +474,18 @@
       }
       requestAnimationFrame(breathe);
     }
-    controls.addEventListener("start", function () { dragging = true; });
+    // A new drag cancels the pending return to center from the last one.
+    controls.addEventListener("start", function () { clearTimeout(settle); clearTimeout(release); dragging = true; });
     controls.addEventListener("end", function () {
-      setTimeout(function () {
+      settle = setTimeout(function () {
         globe.pointOfView({ lat: CENTER.lat, lng: CENTER.lng, altitude: 2.25 }, 1600);
-        setTimeout(function () { dragging = false; t0 = performance.now(); }, 1650);
+        release = setTimeout(function () { dragging = false; t0 = performance.now(); }, 1650);
       }, 2500);
     });
 
     function sync() { (paused || !visible || document.hidden) ? globe.pauseAnimation() : globe.resumeAnimation(); }
     button.addEventListener("click", function () {
       paused = !paused;
-      button.setAttribute("aria-pressed", String(paused));
       button.textContent = paused ? "Resume motion" : "Pause motion";
       sync();
     });
@@ -519,6 +523,8 @@
   var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var container = document.getElementById("viewDiv");
   if (!container || !("IntersectionObserver" in window)) return;
+  var fallback = container.querySelector(".map-fallback");
+  function failed() { fallback.textContent = "The map didn't load here. Every place is listed beside it."; }
 
   var io = new IntersectionObserver(function (en) {
     if (!en[0].isIntersecting) return;
@@ -529,6 +535,7 @@
     var s = document.createElement("script");
     s.src = "https://js.arcgis.com/4.31/";
     s.onload = build;
+    s.onerror = failed;
     document.head.appendChild(s);
   }, { rootMargin: "600px 0px" });
   io.observe(container);
@@ -538,6 +545,7 @@
     function (Map, MapView, Graphic, GraphicsLayer) {
       var layer = new GraphicsLayer();
       var view = new MapView({ container: "viewDiv", map: new Map({ basemap: "osm", layers: [layer] }), center: [-119.5, 36.5], zoom: 5 });
+      view.navigation.browserTouchPanEnabled = false; // on touch, one finger scrolls the page and two pan the map
       var graphics = {};
       Object.keys(places).forEach(function (key) {
         var p = places[key];
@@ -552,7 +560,7 @@
         layer.add(graphics[key]);
       });
       view.when(function () {
-        var fb = container.querySelector(".map-fallback"); if (fb) fb.remove();
+        fallback.remove();
         // Open on California, then settle on the Los Angeles area where the work happened.
         new IntersectionObserver(function (en, o) {
           if (!en[0].isIntersecting) return;
@@ -570,7 +578,7 @@
             }).catch(function () {});
           });
         });
-      });
+      }, failed);
     });
   }
 })();
